@@ -1,0 +1,38 @@
+Date: [15th April 2026] 
+Duration: 30 minutes (strictly timed) 
+Format: Video call (recorded with permission) 
+Objective: Obtain a finance director's candid, data-driven perspective on the key European macroeconomic, regulatory, operational, and competitive factors affecting sales and distribution of Japanese tractors (Kubota). Focus on current challenges facing the tractor company, financial implications, risks, opportunities, and priority process improvements for the next 6-12 months. 
+Participants
+Interviewee: Christian Brink - European Finance Director (P&L ownership, cash flow, pricing, distributor financing, cost control across EU/UK/EEA)
+Interviewer: Phil Sage - Tulkah AI Director, Finance Director and Senior Managing Consultant
+Current Market Context (for Interviewer Background)
+European tractor sales declined sharply in 2025 (e.g., Germany -12%, France -15%, with overall weak demand). Factors include low crop prices, high interest rates, tight farmer budgets, inventory reductions, stringent EU emissions regulations (Stage V/Tier 5), supply chain volatility, currency risks (EUR/JPY), shifting subsidies toward sustainable/electric equipment, and second-hand market growth. Japanese brands face import dynamics, potential tariff pressures, and competition from localized EU production/electrification trends.
+Interview Structure & Agenda (30 mins total)
+1. Welcoming & Kick-off (2-3 mins)
+Warm introduction and rapport building.
+Brief intros (roles + quick context).
+State objective clearly: Today I'd like to understand the key European factors impacting Japanese tractor sales/distribution from a finance lens, current challenges your company faces, and areas where finance processes can drive improvement.
+Confirm duration (30 mins) and recording permission.
+Please feel free to flag if we touch on any off limits topics.
+2. Core Discussion Topics (22-24 mins) Cover these areas conversationally. Use open questions, then probe with 5 Whys on improvement targets or pain points to build evidence. Listen actively - let the interviewee speak and interrupt only if needed for clarification.
+Key Topics to Cover:
+A. General European Factors Impacting Sales & Distribution (8-10 mins)
+Macroeconomic headwinds (interest rates, farmer income, commodity prices, inflation).
+Regulatory & sustainability pressures (EU emissions standards, CBAM, subsidies for electric/hybrid/low-emission equipment).
+Supply chain, currency (JPY/EUR), tariff/import dynamics, and logistics costs.
+Distribution channel challenges (dealer financing, inventory levels, shift to used equipment, online platforms).
+Competitive landscape vs. EU/US brands and electrification trends.
+Regional variations (e.g., stronger Italy vs. weaker Germany/France).
+B. Current Issues Facing the Tractor Company (6-8 mins)
+Biggest financial/P&L pressures right now (margin erosion, cash flow, bad debts).
+Impact of 2025 sales declines and inventory adjustments.
+Pricing power, cost pass-through, and distributor support programs.
+Risk exposure (currency, credit, regulatory compliance costs).
+Opportunities in after-sales, precision tech, or sustainable finance products.
+C. 10 Typical Areas for a Finance Director to Improve Processes (8-10 mins) Probe which of these are most relevant/painful, current performance, targets, and quick wins. Use 5 Whys on gaps.
+1. Forecasting & Budgeting Accuracy - Demand volatility in ag sector.
+2. Working Capital & Cash Flow Management - Inventory, receivables from dealers, floor-plan financing.
+3. Cost Control & Margin Protection - Rising input/supply chain costs, tariff impacts.
+4. Pricing Strategy & Profitability Analysis - Dynamic pricing amid currency and competition.
+5. Credit Risk & Distributor Financing - Dealer solvency and bad debt control.
+6. Regulatory Compliance & Tax Optimization - EU emissions, ESG reporting, VAT/cross-border.
