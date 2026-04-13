@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-files-path name="my_docs" path="Documents" />
-    <files-path name="internal_files" path="/" />
+    <!-- Cache directory where we save scripts -->
+    <cache-path name="pdf_scripts" path="."/>
 </paths>

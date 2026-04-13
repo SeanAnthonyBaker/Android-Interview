@@ -60,6 +60,9 @@ class GeminiLiveService(private val context: Context) {
     private val gson = Gson()
     private val turnBuffer = StringBuilder()
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    
+    private val audioQueue = kotlinx.coroutines.channels.Channel<ByteArray>(kotlinx.coroutines.channels.Channel.UNLIMITED)
+    private var playbackJob: Job? = null
 
     // Mic mute during AI speech to prevent echo feedback
     @Volatile private var micMuted = false
@@ -205,6 +208,23 @@ class GeminiLiveService(private val context: Context) {
                             _activeTurnText.value = ""
                             _isAiSpeaking.value = false
                             micMuted = false
+                            
+                            // Clear queue and flush audio
+                            audioQueue.tryReceive() // drain queue (simplistic clear)
+                            var drained = true
+                            while(drained) {
+                                val res = audioQueue.tryReceive()
+                                if (res.isFailure || res.isClosed) drained = false
+                            }
+                            
+                            try {
+                                audioTrack?.pause()
+                                audioTrack?.flush()
+                                audioTrack?.play()
+                            } catch (e: Exception) {
+                                Log.e(TAG, "AudioTrack flush failed", e)
+                            }
+                            
                             return
                         }
 
@@ -279,17 +299,30 @@ class GeminiLiveService(private val context: Context) {
 
     private fun enableSpeaker() {
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        audioManager.isSpeakerphoneOn = true
-        // Boost media volume
-        val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol, 0)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val devices = audioManager.availableCommunicationDevices
+            val speaker = devices.firstOrNull { it.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
+            if (speaker != null) {
+                audioManager.setCommunicationDevice(speaker)
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.isSpeakerphoneOn = true
+        }
+
+        // Boost voice call volume
         val maxVoice = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
         audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, maxVoice, 0)
-        Log.d(TAG, "Speaker enabled, volume max")
+        Log.d(TAG, "Speaker enabled, modern communication device set")
     }
 
     private fun disableSpeaker() {
-        audioManager.isSpeakerphoneOn = false
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            audioManager.clearCommunicationDevice()
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.isSpeakerphoneOn = false
+        }
         audioManager.mode = AudioManager.MODE_NORMAL
     }
 
@@ -315,16 +348,29 @@ class GeminiLiveService(private val context: Context) {
             .setTransferMode(AudioTrack.MODE_STREAM)
             .build()
         audioTrack?.play()
+        
+        playbackJob?.cancel()
+        playbackJob = scope.launch(Dispatchers.IO) {
+            for (bytes in audioQueue) {
+                if (isActive) {
+                    try {
+                        val written = audioTrack?.write(bytes, 0, bytes.size) ?: -1
+                        if (written < 0) {
+                            Log.e(TAG, "AudioTrack write failed: $written")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Audio queue write error", e)
+                    }
+                }
+            }
+        }
         Log.d(TAG, "AudioTrack initialized: state=${audioTrack?.state}, playState=${audioTrack?.playState}")
     }
 
     private fun playPcmAudio(base64Data: String) {
         try {
             val bytes = Base64.decode(base64Data, Base64.DEFAULT)
-            val written = audioTrack?.write(bytes, 0, bytes.size) ?: -1
-            if (written < 0) {
-                Log.e(TAG, "AudioTrack write failed: $written")
-            }
+            audioQueue.trySend(bytes)
         } catch (e: Exception) {
             Log.e(TAG, "Audio playback error", e)
         }
@@ -385,6 +431,8 @@ class GeminiLiveService(private val context: Context) {
 
     fun disconnect() {
         stopAudioCapture()
+        playbackJob?.cancel()
+        playbackJob = null
         audioTrack?.stop()
         audioTrack?.release()
         audioTrack = null
@@ -413,10 +461,9 @@ class GeminiLiveService(private val context: Context) {
 You are Phil Sage, an experienced Senior Managing Consultant and AI Director at Tulkah. You are conducting a live stakeholder interview.
 
 PERSONA & VOICE:
-- You have a warm, professional, but distinct New Zealand (Kiwi) accent. 
-- IMPORTANT: You MUST speak with a thick, authentic New Zealand (Kiwi) accent. Your vowels should reflect this (e.g., "fish and chips" sounds like "fush and chups" to others).
-- Use Kiwi idioms and speech patterns naturally (e.g., "Kia ora" for welcome, "sweet as", "cheers", "no worries", "chur", "bro", "mate").
-- Your tone is friendly, collaborative, and typical of a senior consultant from New Zealand.
+- You have a warm, professional, but subtle New Zealand (Kiwi) accent. 
+- IMPORTANT: DO NOT overdo the slang. Use Kiwi idioms naturally but sparingly (e.g., occasional "Kia ora", "cheers", or "mate"). 
+- Your primary focus is being a clear, professional senior consultant; the accent is just a subtle flavor.
 
 YOUR ROLE:
 - You ARE the interviewer. You speak directly to the interviewee.
